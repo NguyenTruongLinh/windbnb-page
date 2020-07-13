@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windbnb</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Muli&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="./css/main.css">
+</head>
+
+<body>
+    <div class="container" id="app">
+        <header>
+            <a href="/" class="logo">
+                <img src="./images/logo.svg" alt="logo">
+            </a>
+            <div class="search-box">
+                <div class="search-location" @click="openLocation">{{ locations.locationInput ? locations.locationInput.city + ', ' + locations.locationInput.country : 'Add location' }}</div>
+                <div class="search-guests" @click="openGuests">{{ guests.guestsInput ? guests.guestsInput + ' guests' : 'Add guests' }}</div>
+                <div class="material-icons" @click="openLocation">search</div>
+            </div>
+            <div class="search-expand" v-if="popup.toggle">
+                <a href="javascript:void(0);" class="close-popup" @click="closePopup"><span class="material-icons">close</span></a>
+                <div class="search-group">
+                    <div class="location--guests">
+                        <label class="location" @click="openLocation" :class="{error: error.location}">
+                            <div class="label ">location</div>
+                            <input type="text " placeholder="Add location " :value="locations.locationInput ? locations.locationInput.city + ', ' + locations.locationInput.country : '' ">
+                            <ul class="child-expand location-expand " v-if="popup.locationPopup ">
+                                <li v-for="(location, index) in locations.cityCountry " :key="index " @click="locationSelected(location) ">
+                                    <span class="material-icons ">place</span>{{ location.city }}, {{ location.country }}
+                                </li>
+                            </ul>
+                        </label>
+                        <div class="border-right "></div>
+                        <label class="guests " @click="openGuests " :class="{error: error.guests}">
+                            <div class="label ">guests</div>
+                            <div class="hidden ">{{ totalGuests() }}</div>
+                            <input type="text " placeholder="Add guests " 
+                                :value="(guests.adults + guests.children)> 0 ? (guests.adults + guests.children) + ' guests' : ''" readonly>
+                            <ul class="child-expand guests-expand" v-if="popup.guestsPopup">
+                                <li>
+                                    <div class="guests">
+                                        <h3>Adults</h3>
+                                        <p>Ages 13 or above</p>
+                                        <div class="quantity">
+                                            <button @click="guests.adults--" :class="{ disabled: guests.adults == 0 }" :disabled="guests.adults == 0">
+                                                    <span class="material-icons">remove</span>
+                                                </button>
+                                            <input class="number" v-model.number="guests.adults" readonly>
+                                            <button @click="guests.adults++"><span class="material-icons">add</span></button>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="guests">
+                                        <h3>Children</h3>
+                                        <p>Ages 2-12</p>
+                                        <div class="quantity">
+                                            <button @click="guests.children--" :class="{ disabled: guests.children == 0 }" :disabled="guests.children == 0">
+                                                    <span class="material-icons">remove</span>
+                                                </button>
+                                            <input class="number" v-model="guests.children" readonly>
+                                            <button @click="guests.children++"><span class="material-icons">add</span></button>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </label>
+                        <div class="border-right"></div>
+                    </div>
+                    <div class="btn-search">
+                        <button @click="submit">
+                            <span class="material-icons">search</span> Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="section">
+            <div class="section-header">
+                <h1>Stays in Finland</h1>
+                <span>12+ stays</span>
+            </div>
+
+            <div class="wrapper" v-if="loading">
+                <div class="wrapper-cell" v-for="(item, index) in 6" :key="index">
+                    <div class="cell">
+                        <div class="image"></div>
+                        <div class="text">
+                            <div class="text-line"></div>
+                            <div class="text-line w-100"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="wind-list" v-else>
+                <div class="wind-item" v-for="(house, index) in houses" :key="index">
+                    <a href="#" class="wind-pd">
+                        <div class="wind-img">
+                            <img v-bind:src="house.photo" v-bind:alt="house.title">
+                        </div>
+                        <div class="wind-content">
+                            <div>
+                                <span class="hot" v-if="house.superHost">Super host</span>
+                                <span class="type">{{ house.type }}</span>
+                                <span class="bed" v-if="house.beds">. {{ house.beds }} beds</span>
+                            </div>
+                            <div class="star">
+                                <span class="material-icons">star_rate</span>
+                                <span>{{ house.rating }}</span>
+                            </div>
+                        </div>
+                        <h2 href="#" class="wind-name">{{ house.title }}</h2>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <p class="my-name">Linh Nguyen @ DevChallenges.io</p>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+    <script src="./js/main.js"></script>
+</body>
+
+</html>
